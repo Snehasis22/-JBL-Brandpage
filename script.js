@@ -23,7 +23,8 @@ const vid = document.getElementById('v');
 /* ── Config ────────────────────────────────────────────────────── */
 const PAR_STR = 12;       // buttery smooth drift
 const VIGN_ALPHA = 0.52;     // premium shadow depth
-const DPR = Math.min(window.devicePixelRatio || 1, 8); // 8K Ultra-HD target scale
+const IS_MOBILE = window.innerWidth <= 768;
+const DPR = IS_MOBILE ? Math.min(window.devicePixelRatio || 1, 2) : Math.min(window.devicePixelRatio || 1, 4); // Capped for performance
 
 /* ── State ─────────────────────────────────────────────────────── */
 let raf = null;
@@ -292,6 +293,23 @@ function startLoop() {
 window.addEventListener('mousemove', e => {
   mX = (e.clientX / window.innerWidth - 0.5) * 2;
   mY = (e.clientY / window.innerHeight - 0.5) * 2;
+}, { passive: true });
+
+// Touch support for smooth response on mobile
+window.addEventListener('touchmove', e => {
+  if (e.touches.length > 0) {
+    const touch = e.touches[0];
+    mX = (touch.clientX / window.innerWidth - 0.5) * 1.5;
+    mY = (touch.clientY / window.innerHeight - 0.5) * 1.5;
+  }
+}, { passive: true });
+
+window.addEventListener('touchstart', e => {
+  if (e.touches.length > 0) {
+    const touch = e.touches[0];
+    mX = (touch.clientX / window.innerWidth - 0.5) * 1.5;
+    mY = (touch.clientY / window.innerHeight - 0.5) * 1.5;
+  }
 }, { passive: true });
 
 window.addEventListener('scroll', () => {
